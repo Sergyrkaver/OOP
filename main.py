@@ -73,7 +73,6 @@ class Lecturer(Mentor):
         self.grades = {}
 
     def __str__(self):
-        # Вычисляем среднюю оценку за лекции
         all_grades = []
         for course_grades in self.grades.values():
             all_grades.extend(course_grades)
@@ -123,46 +122,113 @@ class Reviewer(Mentor):
         return (f"Имя: {self.name}\n"
                 f"Фамилия: {self.surname}")
 
-print('Проверяющий')
-some_reviewer = Reviewer('Some', 'Buddy')
-print(some_reviewer)
-print()
 
-print('Лектор')
-some_lecturer = Lecturer('Some', 'Buddy')
-some_lecturer.grades = {'Python': [9, 10, 9.5]}
-print(some_lecturer)
-print()
+def calculate_avg_hw_grade(students, course):
+    total_grades = []
+    for student in students:
+        if course in student.grades:
+            total_grades.extend(student.grades[course])
 
-print('Студент')
-some_student = Student('Ruoy', 'Eman', 'your_gender')
-some_student.courses_in_progress = ['Python', 'Git']
-some_student.finished_courses = ['Введение в программирование']
-some_student.grades = {'Python': [10, 9, 10]}
-print(some_student)
-print()
+    return sum(total_grades) / len(total_grades) if total_grades else 0
 
-print('Сравнение лекторов')
+
+def calculate_avg_lecture_grade(lecturers, course):
+    total_grades = []
+    for lecturer in lecturers:
+        if course in lecturer.grades:
+            total_grades.extend(lecturer.grades[course])
+
+    return sum(total_grades) / len(total_grades) if total_grades else 0
+
+
+
+print('Создаем экземпляры')
+
+reviewer1 = Reviewer('Петр', 'Петров')
+reviewer2 = Reviewer('Мария', 'Сидорова')
+
 lecturer1 = Lecturer('Иван', 'Иванов')
-lecturer1.grades = {'Python': [8, 9, 7]}
-lecturer2 = Lecturer('Петр', 'Петров')
-lecturer2.grades = {'Java': [9, 10, 9]}
+lecturer2 = Lecturer('Анна', 'Кузнецова')
 
-print(f"Лектор 1 средняя: {lecturer1._get_avg_grade():.1f}")
-print(f"Лектор 2 средняя: {lecturer2._get_avg_grade():.1f}")
-print(f"lecturer1 < lecturer2: {lecturer1 < lecturer2}")
+student1 = Student('Алексей', 'Смирнов', 'М')
+student2 = Student('Ольга', 'Орлова', 'Ж')
+
+print('Настройка курсов')
+student1.courses_in_progress = ['Python', 'Git']
+student1.finished_courses = ['Введение в программирование']
+
+student2.courses_in_progress = ['Python', 'Java']
+student2.finished_courses = ['Основы алгоритмов']
+
+lecturer1.courses_attached = ['Python', 'Git']
+lecturer2.courses_attached = ['Python', 'Java']
+
+reviewer1.courses_attached = ['Python', 'Git']
+reviewer2.courses_attached = ['Python', 'Java']
+
+print('Выставления оценок студентам')
+reviewer1.rate_hw(student1, 'Python', 9)
+reviewer1.rate_hw(student1, 'Python', 8)
+reviewer1.rate_hw(student1, 'Git', 10)
+
+reviewer2.rate_hw(student2, 'Python', 7)
+reviewer2.rate_hw(student2, 'Python', 9)
+reviewer2.rate_hw(student2, 'Java', 8)
+
+print('Оценки студента 1:', student1.grades)
+print('Оценки студента 2:', student2.grades)
+
+print('Выставления оченок лекторам')
+student1.rate_lecture(lecturer1, 'Python', 9)
+student1.rate_lecture(lecturer1, 'Git', 8)
+
+student2.rate_lecture(lecturer1, 'Python', 10)
+student2.rate_lecture(lecturer2, 'Python', 7)
+student2.rate_lecture(lecturer2, 'Java', 9)
+
+print('Оценки лектора 1:', lecturer1.grades)
+print('Оценки лектора 2:', lecturer2.grades)
+
+print('Тестирование магических методов')
+print('Reviewer 1:')
+print(reviewer1)
+print('Reviewer 2:')
+print(reviewer2)
+
+print('Lecturer 1:')
+print(lecturer1)
+print('Lecturer 2:')
+print(lecturer2)
+
+print('Student 1:')
+print(student1)
+print('Student 2:')
+print(student2)
+
+print('Тестирование сравнений')
 print(f"lecturer1 > lecturer2: {lecturer1 > lecturer2}")
-print(f"lecturer1 == lecturer2: {lecturer1 == lecturer2}")
-print()
-
-print('Сравнение студентов')
-student1 = Student('Иван', 'Петров', 'М')
-student1.grades = {'Python': [7, 8, 9]}
-student2 = Student('Ольга', 'Кузнецова', 'Ж')
-student2.grades = {'Java': [9, 10, 9]}
-
-print(f"Студент 1 средняя: {student1._get_avg_grade():.1f}")
-print(f"Студент 2 средняя: {student2._get_avg_grade():.1f}")
-print(f"student1 < student2: {student1 < student2}")
-print(f"student1 > student2: {student1 > student2}")
+print(f"lecturer1 < lecturer2: {lecturer1 < lecturer2}")
 print(f"student1 == student2: {student1 == student2}")
+print(f"student1 <= student2: {student1 <= student2}")
+
+print('Тестирование функций')
+# Тестируем функции подсчета средних оценок
+students_list = [student1, student2]
+lecturers_list = [lecturer1, lecturer2]
+
+python_avg_hw = calculate_avg_hw_grade(students_list, 'Python')
+python_avg_lecture = calculate_avg_lecture_grade(lecturers_list, 'Python')
+
+print(f"Средняя оценка за ДЗ по курсу Python: {python_avg_hw:.1f}")
+print(f"Средняя оценка за лекции по курсу Python: {python_avg_lecture:.1f}")
+
+git_avg_hw = calculate_avg_hw_grade(students_list, 'Git')
+java_avg_lecture = calculate_avg_lecture_grade(lecturers_list, 'Java')
+
+print(f"Средняя оценка за ДЗ по курсу Git: {git_avg_hw:.1f}")
+print(f"Средняя оценка за лекции по курсу Java: {java_avg_lecture:.1f}")
+
+print('Тестирование ошибок')
+print("Ошибка при оценке не того курса:", reviewer1.rate_hw(student1, 'Java', 8))
+print("Ошибка при оценке не лектора:", student1.rate_lecture(reviewer1, 'Python', 8))
+print("Ошибка при оценке несуществующего курса:", student1.rate_lecture(lecturer1, 'C++', 8))
